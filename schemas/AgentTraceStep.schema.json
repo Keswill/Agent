@@ -1,0 +1,89 @@
+{
+  "$defs": {
+    "AgentToolStatus": {
+      "enum": [
+        "selected",
+        "skipped",
+        "completed",
+        "failed"
+      ],
+      "title": "AgentToolStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "trace_id": {
+      "minimum": 1,
+      "title": "Trace Id",
+      "type": "integer"
+    },
+    "tool_name": {
+      "title": "Tool Name",
+      "type": "string"
+    },
+    "decision": {
+      "title": "Decision",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/AgentToolStatus"
+    },
+    "started_at": {
+      "format": "date-time",
+      "title": "Started At",
+      "type": "string"
+    },
+    "ended_at": {
+      "anyOf": [
+        {
+          "format": "date-time",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ended At"
+    },
+    "latency_ms": {
+      "anyOf": [
+        {
+          "minimum": 0.0,
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Latency Ms"
+    },
+    "input_summary": {
+      "additionalProperties": true,
+      "title": "Input Summary",
+      "type": "object"
+    },
+    "output_summary": {
+      "additionalProperties": true,
+      "title": "Output Summary",
+      "type": "object"
+    },
+    "errors": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Errors",
+      "type": "array"
+    }
+  },
+  "required": [
+    "trace_id",
+    "tool_name",
+    "decision",
+    "status"
+  ],
+  "title": "AgentTraceStep",
+  "type": "object"
+}

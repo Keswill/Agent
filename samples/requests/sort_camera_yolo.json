@@ -1,0 +1,7 @@
+{
+  "image": {
+    "camera_index": 0,
+    "frame_id": "camera"
+  },
+  "instruction": "Detect all bottles and place recyclable items into bin recycle."
+}

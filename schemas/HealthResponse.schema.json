@@ -1,0 +1,35 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "status": {
+      "const": "ok",
+      "title": "Status",
+      "type": "string"
+    },
+    "app_env": {
+      "title": "App Env",
+      "type": "string"
+    },
+    "llm_backend": {
+      "title": "Llm Backend",
+      "type": "string"
+    },
+    "segmentation_backend": {
+      "title": "Segmentation Backend",
+      "type": "string"
+    },
+    "agent_integration": {
+      "title": "Agent Integration",
+      "type": "string"
+    }
+  },
+  "required": [
+    "status",
+    "app_env",
+    "llm_backend",
+    "segmentation_backend",
+    "agent_integration"
+  ],
+  "title": "HealthResponse",
+  "type": "object"
+}

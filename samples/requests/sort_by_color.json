@@ -1,0 +1,8 @@
+{
+  "image": {
+    "image_path": "samples/images/demo_sort_scene.png",
+    "frame_id": "camera"
+  },
+  "instruction": "Sort the red cube to bin A and the blue cylinder to bin B."
+}
+

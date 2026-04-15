@@ -1,0 +1,107 @@
+{
+  "$defs": {
+    "ImageInput": {
+      "additionalProperties": false,
+      "description": "Image payload reference. Exactly one image source should be supplied.",
+      "properties": {
+        "image_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Image Url"
+        },
+        "image_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Image Path"
+        },
+        "image_b64": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Image B64"
+        },
+        "camera_index": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Camera Index"
+        },
+        "stream_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stream Url"
+        },
+        "frame_id": {
+          "default": "camera",
+          "title": "Frame Id",
+          "type": "string"
+        }
+      },
+      "title": "ImageInput",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "image": {
+      "$ref": "#/$defs/ImageInput"
+    },
+    "instruction": {
+      "minLength": 1,
+      "title": "Instruction",
+      "type": "string"
+    },
+    "request_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Request Id"
+    }
+  },
+  "required": [
+    "image",
+    "instruction"
+  ],
+  "title": "PipelineRequest",
+  "type": "object"
+}

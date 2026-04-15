@@ -1,0 +1,7 @@
+{
+  "image": {
+    "stream_url": "rtsp://127.0.0.1:8554/sorting-cell",
+    "frame_id": "camera"
+  },
+  "instruction": "Sort the visible red objects to bin A and blue objects to bin B."
+}

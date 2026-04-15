@@ -1,0 +1,79 @@
+{
+  "$defs": {
+    "DryRunEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "command_id": {
+          "pattern": "^cmd_[0-9]{3,}$",
+          "title": "Command Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "ready",
+            "skipped",
+            "blocked"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "command_id",
+        "status",
+        "message"
+      ],
+      "title": "DryRunEvent",
+      "type": "object"
+    },
+    "ValidationStatus": {
+      "enum": [
+        "passed",
+        "repaired",
+        "failed"
+      ],
+      "title": "ValidationStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "request_id": {
+      "title": "Request Id",
+      "type": "string"
+    },
+    "status": {
+      "$ref": "#/$defs/ValidationStatus"
+    },
+    "commands_checked": {
+      "minimum": 0,
+      "title": "Commands Checked",
+      "type": "integer"
+    },
+    "events": {
+      "items": {
+        "$ref": "#/$defs/DryRunEvent"
+      },
+      "title": "Events",
+      "type": "array"
+    },
+    "errors": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Errors",
+      "type": "array"
+    }
+  },
+  "required": [
+    "request_id",
+    "status",
+    "commands_checked"
+  ],
+  "title": "DryRunReport",
+  "type": "object"
+}

@@ -1,0 +1,364 @@
+{
+  "$defs": {
+    "BoundingBox": {
+      "additionalProperties": false,
+      "properties": {
+        "x_min": {
+          "title": "X Min",
+          "type": "number"
+        },
+        "y_min": {
+          "title": "Y Min",
+          "type": "number"
+        },
+        "x_max": {
+          "title": "X Max",
+          "type": "number"
+        },
+        "y_max": {
+          "title": "Y Max",
+          "type": "number"
+        },
+        "coordinate_space": {
+          "$ref": "#/$defs/CoordinateSpace",
+          "default": "normalized"
+        }
+      },
+      "required": [
+        "x_min",
+        "y_min",
+        "x_max",
+        "y_max"
+      ],
+      "title": "BoundingBox",
+      "type": "object"
+    },
+    "CoordinateSpace": {
+      "enum": [
+        "pixel",
+        "normalized"
+      ],
+      "title": "CoordinateSpace",
+      "type": "string"
+    },
+    "ExecutionRef": {
+      "additionalProperties": false,
+      "description": "Stable reference consumed by an execution-side grasp planner.",
+      "properties": {
+        "frame_id": {
+          "default": "camera",
+          "title": "Frame Id",
+          "type": "string"
+        },
+        "object_ref": {
+          "title": "Object Ref",
+          "type": "string"
+        },
+        "bbox": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BoundingBox"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "mask": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MaskRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "grasp_hints": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Grasp Hints",
+          "type": "array"
+        }
+      },
+      "required": [
+        "object_ref"
+      ],
+      "title": "ExecutionRef",
+      "type": "object"
+    },
+    "MaskRef": {
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        },
+        "encoding": {
+          "default": "none",
+          "enum": [
+            "rle",
+            "polygon",
+            "png",
+            "npy",
+            "none"
+          ],
+          "title": "Encoding",
+          "type": "string"
+        },
+        "confidence": {
+          "default": 0.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        }
+      },
+      "required": [
+        "uri"
+      ],
+      "title": "MaskRef",
+      "type": "object"
+    },
+    "ObjectAttributes": {
+      "additionalProperties": false,
+      "properties": {
+        "color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color"
+        },
+        "material": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Material"
+        },
+        "shape": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shape"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "open_vocab": {
+          "additionalProperties": true,
+          "title": "Open Vocab",
+          "type": "object"
+        }
+      },
+      "title": "ObjectAttributes",
+      "type": "object"
+    },
+    "ObjectInstance": {
+      "additionalProperties": false,
+      "properties": {
+        "object_id": {
+          "pattern": "^obj_[0-9]{3,}$",
+          "title": "Object Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "canonical_label": {
+          "title": "Canonical Label",
+          "type": "string"
+        },
+        "aliases": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Aliases",
+          "type": "array"
+        },
+        "attributes": {
+          "$ref": "#/$defs/ObjectAttributes"
+        },
+        "bbox": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BoundingBox"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "mask": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MaskRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "confidence": {
+          "default": 0.5,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "graspable": {
+          "default": true,
+          "title": "Graspable",
+          "type": "boolean"
+        },
+        "source": {
+          "$ref": "#/$defs/ObjectSource",
+          "default": "fused"
+        },
+        "execution_ref": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExecutionRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "object_id",
+        "label",
+        "canonical_label"
+      ],
+      "title": "ObjectInstance",
+      "type": "object"
+    },
+    "ObjectSource": {
+      "enum": [
+        "segmentation",
+        "multimodal_llm",
+        "fused",
+        "heuristic",
+        "repaired"
+      ],
+      "title": "ObjectSource",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "default": "0.1.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "request_id": {
+      "title": "Request Id",
+      "type": "string"
+    },
+    "image_ref": {
+      "title": "Image Ref",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "objects": {
+      "items": {
+        "$ref": "#/$defs/ObjectInstance"
+      },
+      "title": "Objects",
+      "type": "array"
+    },
+    "scene_summary": {
+      "default": "",
+      "title": "Scene Summary",
+      "type": "string"
+    },
+    "uncertain_objects": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Uncertain Objects",
+      "type": "array"
+    },
+    "metadata": {
+      "additionalProperties": true,
+      "title": "Metadata",
+      "type": "object"
+    }
+  },
+  "required": [
+    "request_id",
+    "image_ref"
+  ],
+  "title": "ObjectTable",
+  "type": "object"
+}

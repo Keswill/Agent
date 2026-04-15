@@ -1,0 +1,193 @@
+{
+  "$defs": {
+    "BoundingBox": {
+      "additionalProperties": false,
+      "properties": {
+        "x_min": {
+          "title": "X Min",
+          "type": "number"
+        },
+        "y_min": {
+          "title": "Y Min",
+          "type": "number"
+        },
+        "x_max": {
+          "title": "X Max",
+          "type": "number"
+        },
+        "y_max": {
+          "title": "Y Max",
+          "type": "number"
+        },
+        "coordinate_space": {
+          "$ref": "#/$defs/CoordinateSpace",
+          "default": "normalized"
+        }
+      },
+      "required": [
+        "x_min",
+        "y_min",
+        "x_max",
+        "y_max"
+      ],
+      "title": "BoundingBox",
+      "type": "object"
+    },
+    "CoordinateSpace": {
+      "enum": [
+        "pixel",
+        "normalized"
+      ],
+      "title": "CoordinateSpace",
+      "type": "string"
+    },
+    "MaskRef": {
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        },
+        "encoding": {
+          "default": "none",
+          "enum": [
+            "rle",
+            "polygon",
+            "png",
+            "npy",
+            "none"
+          ],
+          "title": "Encoding",
+          "type": "string"
+        },
+        "confidence": {
+          "default": 0.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        }
+      },
+      "required": [
+        "uri"
+      ],
+      "title": "MaskRef",
+      "type": "object"
+    },
+    "PlanAction": {
+      "enum": [
+        "inspect",
+        "pick",
+        "place",
+        "skip",
+        "replan"
+      ],
+      "title": "PlanAction",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "command_id": {
+      "pattern": "^cmd_[0-9]{3,}$",
+      "title": "Command Id",
+      "type": "string"
+    },
+    "step_id": {
+      "minimum": 1,
+      "title": "Step Id",
+      "type": "integer"
+    },
+    "action": {
+      "$ref": "#/$defs/PlanAction"
+    },
+    "object_id": {
+      "anyOf": [
+        {
+          "pattern": "^obj_[0-9]{3,}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Object Id"
+    },
+    "target": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Target"
+    },
+    "frame_id": {
+      "default": "camera",
+      "title": "Frame Id",
+      "type": "string"
+    },
+    "object_ref": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Object Ref"
+    },
+    "bbox": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BoundingBox"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "mask": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MaskRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "grasp_planner": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Grasp Planner"
+    },
+    "parameters": {
+      "additionalProperties": true,
+      "title": "Parameters",
+      "type": "object"
+    }
+  },
+  "required": [
+    "command_id",
+    "step_id",
+    "action"
+  ],
+  "title": "ExecutionCommand",
+  "type": "object"
+}

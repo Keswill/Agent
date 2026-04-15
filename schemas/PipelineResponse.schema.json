@@ -1,0 +1,980 @@
+{
+  "$defs": {
+    "AgentToolStatus": {
+      "enum": [
+        "selected",
+        "skipped",
+        "completed",
+        "failed"
+      ],
+      "title": "AgentToolStatus",
+      "type": "string"
+    },
+    "AgentTraceStep": {
+      "additionalProperties": false,
+      "properties": {
+        "trace_id": {
+          "minimum": 1,
+          "title": "Trace Id",
+          "type": "integer"
+        },
+        "tool_name": {
+          "title": "Tool Name",
+          "type": "string"
+        },
+        "decision": {
+          "title": "Decision",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/AgentToolStatus"
+        },
+        "started_at": {
+          "format": "date-time",
+          "title": "Started At",
+          "type": "string"
+        },
+        "ended_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Ended At"
+        },
+        "latency_ms": {
+          "anyOf": [
+            {
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Latency Ms"
+        },
+        "input_summary": {
+          "additionalProperties": true,
+          "title": "Input Summary",
+          "type": "object"
+        },
+        "output_summary": {
+          "additionalProperties": true,
+          "title": "Output Summary",
+          "type": "object"
+        },
+        "errors": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Errors",
+          "type": "array"
+        }
+      },
+      "required": [
+        "trace_id",
+        "tool_name",
+        "decision",
+        "status"
+      ],
+      "title": "AgentTraceStep",
+      "type": "object"
+    },
+    "Assignment": {
+      "additionalProperties": false,
+      "properties": {
+        "assignment_id": {
+          "pattern": "^assign_[0-9]{3,}$",
+          "title": "Assignment Id",
+          "type": "string"
+        },
+        "object_id": {
+          "pattern": "^obj_[0-9]{3,}$",
+          "title": "Object Id",
+          "type": "string"
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "rule_id": {
+          "anyOf": [
+            {
+              "pattern": "^rule_[0-9]{3,}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rule Id"
+        },
+        "rationale": {
+          "default": "",
+          "title": "Rationale",
+          "type": "string"
+        },
+        "constraints": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Constraints",
+          "type": "array"
+        },
+        "confidence": {
+          "default": 0.5,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        }
+      },
+      "required": [
+        "assignment_id",
+        "object_id",
+        "target"
+      ],
+      "title": "Assignment",
+      "type": "object"
+    },
+    "BoundingBox": {
+      "additionalProperties": false,
+      "properties": {
+        "x_min": {
+          "title": "X Min",
+          "type": "number"
+        },
+        "y_min": {
+          "title": "Y Min",
+          "type": "number"
+        },
+        "x_max": {
+          "title": "X Max",
+          "type": "number"
+        },
+        "y_max": {
+          "title": "Y Max",
+          "type": "number"
+        },
+        "coordinate_space": {
+          "$ref": "#/$defs/CoordinateSpace",
+          "default": "normalized"
+        }
+      },
+      "required": [
+        "x_min",
+        "y_min",
+        "x_max",
+        "y_max"
+      ],
+      "title": "BoundingBox",
+      "type": "object"
+    },
+    "CoordinateSpace": {
+      "enum": [
+        "pixel",
+        "normalized"
+      ],
+      "title": "CoordinateSpace",
+      "type": "string"
+    },
+    "DryRunEvent": {
+      "additionalProperties": false,
+      "properties": {
+        "command_id": {
+          "pattern": "^cmd_[0-9]{3,}$",
+          "title": "Command Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "ready",
+            "skipped",
+            "blocked"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "command_id",
+        "status",
+        "message"
+      ],
+      "title": "DryRunEvent",
+      "type": "object"
+    },
+    "DryRunReport": {
+      "additionalProperties": false,
+      "properties": {
+        "request_id": {
+          "title": "Request Id",
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/$defs/ValidationStatus"
+        },
+        "commands_checked": {
+          "minimum": 0,
+          "title": "Commands Checked",
+          "type": "integer"
+        },
+        "events": {
+          "items": {
+            "$ref": "#/$defs/DryRunEvent"
+          },
+          "title": "Events",
+          "type": "array"
+        },
+        "errors": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Errors",
+          "type": "array"
+        }
+      },
+      "required": [
+        "request_id",
+        "status",
+        "commands_checked"
+      ],
+      "title": "DryRunReport",
+      "type": "object"
+    },
+    "ExecutionCommand": {
+      "additionalProperties": false,
+      "properties": {
+        "command_id": {
+          "pattern": "^cmd_[0-9]{3,}$",
+          "title": "Command Id",
+          "type": "string"
+        },
+        "step_id": {
+          "minimum": 1,
+          "title": "Step Id",
+          "type": "integer"
+        },
+        "action": {
+          "$ref": "#/$defs/PlanAction"
+        },
+        "object_id": {
+          "anyOf": [
+            {
+              "pattern": "^obj_[0-9]{3,}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Object Id"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target"
+        },
+        "frame_id": {
+          "default": "camera",
+          "title": "Frame Id",
+          "type": "string"
+        },
+        "object_ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Object Ref"
+        },
+        "bbox": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BoundingBox"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "mask": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MaskRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "grasp_planner": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Grasp Planner"
+        },
+        "parameters": {
+          "additionalProperties": true,
+          "title": "Parameters",
+          "type": "object"
+        }
+      },
+      "required": [
+        "command_id",
+        "step_id",
+        "action"
+      ],
+      "title": "ExecutionCommand",
+      "type": "object"
+    },
+    "ExecutionRef": {
+      "additionalProperties": false,
+      "description": "Stable reference consumed by an execution-side grasp planner.",
+      "properties": {
+        "frame_id": {
+          "default": "camera",
+          "title": "Frame Id",
+          "type": "string"
+        },
+        "object_ref": {
+          "title": "Object Ref",
+          "type": "string"
+        },
+        "bbox": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BoundingBox"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "mask": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MaskRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "grasp_hints": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Grasp Hints",
+          "type": "array"
+        }
+      },
+      "required": [
+        "object_ref"
+      ],
+      "title": "ExecutionRef",
+      "type": "object"
+    },
+    "MaskRef": {
+      "additionalProperties": false,
+      "properties": {
+        "uri": {
+          "title": "Uri",
+          "type": "string"
+        },
+        "encoding": {
+          "default": "none",
+          "enum": [
+            "rle",
+            "polygon",
+            "png",
+            "npy",
+            "none"
+          ],
+          "title": "Encoding",
+          "type": "string"
+        },
+        "confidence": {
+          "default": 0.0,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        }
+      },
+      "required": [
+        "uri"
+      ],
+      "title": "MaskRef",
+      "type": "object"
+    },
+    "ObjectAttributes": {
+      "additionalProperties": false,
+      "properties": {
+        "color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Color"
+        },
+        "material": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Material"
+        },
+        "shape": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Shape"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "State"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "open_vocab": {
+          "additionalProperties": true,
+          "title": "Open Vocab",
+          "type": "object"
+        }
+      },
+      "title": "ObjectAttributes",
+      "type": "object"
+    },
+    "ObjectInstance": {
+      "additionalProperties": false,
+      "properties": {
+        "object_id": {
+          "pattern": "^obj_[0-9]{3,}$",
+          "title": "Object Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "canonical_label": {
+          "title": "Canonical Label",
+          "type": "string"
+        },
+        "aliases": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Aliases",
+          "type": "array"
+        },
+        "attributes": {
+          "$ref": "#/$defs/ObjectAttributes"
+        },
+        "bbox": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/BoundingBox"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "mask": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MaskRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "confidence": {
+          "default": 0.5,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Confidence",
+          "type": "number"
+        },
+        "graspable": {
+          "default": true,
+          "title": "Graspable",
+          "type": "boolean"
+        },
+        "source": {
+          "$ref": "#/$defs/ObjectSource",
+          "default": "fused"
+        },
+        "execution_ref": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExecutionRef"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "notes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Notes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "object_id",
+        "label",
+        "canonical_label"
+      ],
+      "title": "ObjectInstance",
+      "type": "object"
+    },
+    "ObjectSource": {
+      "enum": [
+        "segmentation",
+        "multimodal_llm",
+        "fused",
+        "heuristic",
+        "repaired"
+      ],
+      "title": "ObjectSource",
+      "type": "string"
+    },
+    "ObjectTable": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "request_id": {
+          "title": "Request Id",
+          "type": "string"
+        },
+        "image_ref": {
+          "title": "Image Ref",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "objects": {
+          "items": {
+            "$ref": "#/$defs/ObjectInstance"
+          },
+          "title": "Objects",
+          "type": "array"
+        },
+        "scene_summary": {
+          "default": "",
+          "title": "Scene Summary",
+          "type": "string"
+        },
+        "uncertain_objects": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Uncertain Objects",
+          "type": "array"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "request_id",
+        "image_ref"
+      ],
+      "title": "ObjectTable",
+      "type": "object"
+    },
+    "Plan": {
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "default": "0.1.0",
+          "title": "Schema Version",
+          "type": "string"
+        },
+        "request_id": {
+          "title": "Request Id",
+          "type": "string"
+        },
+        "instruction": {
+          "title": "Instruction",
+          "type": "string"
+        },
+        "object_table_ref": {
+          "title": "Object Table Ref",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "rules": {
+          "items": {
+            "$ref": "#/$defs/Rule"
+          },
+          "title": "Rules",
+          "type": "array"
+        },
+        "assignments": {
+          "items": {
+            "$ref": "#/$defs/Assignment"
+          },
+          "title": "Assignments",
+          "type": "array"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/PlanStep"
+          },
+          "title": "Steps",
+          "type": "array"
+        },
+        "validation": {
+          "$ref": "#/$defs/ValidationReport"
+        },
+        "execution_contract": {
+          "additionalProperties": true,
+          "title": "Execution Contract",
+          "type": "object"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        }
+      },
+      "required": [
+        "request_id",
+        "instruction",
+        "object_table_ref"
+      ],
+      "title": "Plan",
+      "type": "object"
+    },
+    "PlanAction": {
+      "enum": [
+        "inspect",
+        "pick",
+        "place",
+        "skip",
+        "replan"
+      ],
+      "title": "PlanAction",
+      "type": "string"
+    },
+    "PlanStep": {
+      "additionalProperties": false,
+      "properties": {
+        "step_id": {
+          "minimum": 1,
+          "title": "Step Id",
+          "type": "integer"
+        },
+        "action": {
+          "$ref": "#/$defs/PlanAction"
+        },
+        "object_id": {
+          "anyOf": [
+            {
+              "pattern": "^obj_[0-9]{3,}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Object Id"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target"
+        },
+        "arguments": {
+          "additionalProperties": true,
+          "title": "Arguments",
+          "type": "object"
+        },
+        "preconditions": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Preconditions",
+          "type": "array"
+        },
+        "expected_result": {
+          "default": "",
+          "title": "Expected Result",
+          "type": "string"
+        },
+        "on_failure": {
+          "default": "replan",
+          "title": "On Failure",
+          "type": "string"
+        }
+      },
+      "required": [
+        "step_id",
+        "action"
+      ],
+      "title": "PlanStep",
+      "type": "object"
+    },
+    "Rule": {
+      "additionalProperties": false,
+      "properties": {
+        "rule_id": {
+          "pattern": "^rule_[0-9]{3,}$",
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/RuleKind"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "conditions": {
+          "additionalProperties": true,
+          "title": "Conditions",
+          "type": "object"
+        },
+        "action": {
+          "additionalProperties": true,
+          "title": "Action",
+          "type": "object"
+        },
+        "priority": {
+          "default": 100,
+          "maximum": 1000,
+          "minimum": 0,
+          "title": "Priority",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "rule_id",
+        "kind",
+        "description"
+      ],
+      "title": "Rule",
+      "type": "object"
+    },
+    "RuleKind": {
+      "enum": [
+        "assignment",
+        "safety",
+        "priority",
+        "validation"
+      ],
+      "title": "RuleKind",
+      "type": "string"
+    },
+    "ValidationReport": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "$ref": "#/$defs/ValidationStatus"
+        },
+        "errors": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Errors",
+          "type": "array"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        },
+        "repaired": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Repaired",
+          "type": "array"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "ValidationReport",
+      "type": "object"
+    },
+    "ValidationStatus": {
+      "enum": [
+        "passed",
+        "repaired",
+        "failed"
+      ],
+      "title": "ValidationStatus",
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "request_id": {
+      "title": "Request Id",
+      "type": "string"
+    },
+    "object_table": {
+      "$ref": "#/$defs/ObjectTable"
+    },
+    "plan": {
+      "$ref": "#/$defs/Plan"
+    },
+    "agent_trace": {
+      "items": {
+        "$ref": "#/$defs/AgentTraceStep"
+      },
+      "title": "Agent Trace",
+      "type": "array"
+    },
+    "execution_commands": {
+      "items": {
+        "$ref": "#/$defs/ExecutionCommand"
+      },
+      "title": "Execution Commands",
+      "type": "array"
+    },
+    "dry_run": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DryRunReport"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "artifacts": {
+      "additionalProperties": {
+        "type": "string"
+      },
+      "title": "Artifacts",
+      "type": "object"
+    },
+    "validation": {
+      "$ref": "#/$defs/ValidationReport"
+    }
+  },
+  "required": [
+    "request_id",
+    "object_table",
+    "plan",
+    "validation"
+  ],
+  "title": "PipelineResponse",
+  "type": "object"
+}
