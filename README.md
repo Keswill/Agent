@@ -20,6 +20,12 @@ image + instruction
   -> object_table.json + plan.json
 ```
 
+## 中文代码说明
+
+如果你想按文件和执行链路系统地阅读代码，可以先看这份中文文档：
+
+- `docs/代码详解.md`
+
 ## Architecture
 
 1. **Schema Layer**
