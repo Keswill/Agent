@@ -5,7 +5,6 @@ pytest-cache-files-*/
 artifacts/
 reports/
 scripts/generate_*ppt.py
-imports/
 .env
 .venv/
 venv/
