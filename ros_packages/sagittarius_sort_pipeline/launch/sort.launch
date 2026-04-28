@@ -1,0 +1,27 @@
+<launch>
+  <arg name="robot_name" default="sgr532"/>
+  <arg name="robot_model" default="$(arg robot_name)"/>
+  <arg name="instruction" default="sort out all the vegetables"/>
+  <arg name="vision_config" default="$(find sagittarius_object_color_detector)/config/vision_config.yaml"/>
+  <arg name="video_dev" default="/dev/usb_cam"/>
+  <arg name="record_video" default="true"/>
+  <arg name="recording_dir" default="$(env HOME)/.ros/sagittarius_sort_pipeline"/>
+  <arg name="video_fps" default="30.0"/>
+  <env name="ROSCONSOLE_CONFIG_FILE"
+       value="$(find sagittarius_sort_pipeline)/config/rosconsole.conf"/>
+  <include file="$(find sagittarius_moveit)/launch/demo_true.launch"/>
+  <node pkg="sagittarius_object_color_detector" type="sgr_ctrl.py"
+        name="sgr_ctrl_node" output="screen" ns="$(arg robot_name)"/>
+  <include file="$(find sagittarius_object_color_detector)/launch/usb_cam.launch">
+    <arg name="video_dev" value="$(arg video_dev)"/>
+  </include>
+  <node pkg="sagittarius_sort_pipeline" type="sort_main.py"
+        name="sort_main" output="screen">
+    <param name="arm_name" value="$(arg robot_name)"/>
+    <param name="instruction" value="$(arg instruction)"/>
+    <param name="vision_config" value="$(arg vision_config)"/>
+    <param name="record_video" value="$(arg record_video)"/>
+    <param name="recording_dir" value="$(arg recording_dir)"/>
+    <param name="video_fps" value="$(arg video_fps)"/>
+  </node>
+</launch>
